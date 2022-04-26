@@ -6,8 +6,8 @@
           <div class="catContainer">
            <template v-for="(article, articleKey) in articles" :key="articleKey">
 
-            <Product v-if="article.categorieName === category.categorieName" :url="article.filePath" :title="article.title" :subCat="article.categorieName" :author="article.author">
-              <Tag class="myTag" value="Disponible" severity="primary" rounded v-if="~~article.stock>0"></Tag>
+            <Product v-if="article.categorieName === category.categorieName" :idArticle="article.idArticle" :url="article.filePath" :title="article.title" :subCat="article.categorieName" :author="article.author" @reloadArticles="getAllArticles">
+              <Tag class="myTag" value="Disponible" severity="success" rounded v-if="~~article.stock>0"></Tag>
               <Tag class="myTag" value="Indisponible" severity="danger" rounded v-else></Tag>
             </Product>
           </template>
@@ -59,13 +59,23 @@ export default {
     })
   },
   created() {
-    let data = new Array();
-    data['controller'] = "ArticlesController";
-    data['action'] = "getAllArticles";
-    fetchData(data).then(data => this.articles = data);
-    data['action'] = "getAllCategories";
-    fetchData(data).then(data => this.categories = data);
+    this.getAllArticles();
+    this.getAllCat();
 
+  },
+  methods:{
+    getAllCat(){
+      let data = new Array();
+      data['controller'] = "ArticlesController";
+      data['action'] = "getAllCategories";
+      fetchData(data,"get").then(data => this.categories = data).catch(error=> console.warn(error) );
+    },
+    getAllArticles(){
+      let data = new Array();
+      data['controller'] = "ArticlesController";
+      data['action'] = "getAllArticles";
+      fetchData(data,"get").then(data => this.articles = data).catch(error=> console.warn(error) );
+    }
   },
   watch: {
     articles() {

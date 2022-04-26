@@ -11,23 +11,75 @@
 			<h3>{{title}}</h3>
             <hr>
 			<h2 class="price">'{{author}}'</h2>
-			<a href="#" class="buy">Prendre</a> 
+			<div class="buy" @click="handelLoan">Prendre</div> 
 		</div>
         <p>{{subCat}}</p>
 	</div>
 </template>
 
 <script>
+import store from '@/store'
+import fetchData from '@/utils/fetchData';
 
 export default {
-    props:['url','title','subCat','author'],
+    props:['idArticle','url','title','subCat','author'],
     data(){
         return({
             text:"test",
         })
     },
     component:{
+    },
+    methods:{
+        handelLoan(){
+            let userInfo = store.state.userInfo;
+            if (userInfo.isConnected){
+                this.$confirm.require({
+                message: `Confirmez-vous vouloir emprunter ${this.title}` ,
+                header: 'Confirmation',
+                icon: 'pi pi-exclamation-triangle',
+                acceptLabel: "Oui",
+                rejectLabel : "Non",
+                rejectIcon:'pi pi-trash',
+                acceptIcon:'pi pi-check-square',
+                blockScroll: false,
+                position:'center',
+                accept: () => {
+                    fetchData({controller : 'loansController',action:'addLoans',idArticle:this.idArticle,idUser : userInfo.idUser}).then(data=>{
+                        if (data.message==="Article emprunté correctement"){
+                            this.$toast.add({severity: 'success', summary: 'Emprunt Réussie', detail: `${data.message}`, group: 'tl', life: 3000});
+                            this.$emit('reloadArticles');
+                        }else if(data.message==="Stock de l'article insuffisant!"){
+                            this.$toast.add({severity: 'error', summary: 'Problème', detail: `${data.message}`, group: 'tl', life: 3000});
+                        }
+                    })
+                    //callback to execute when user confirms the action
+                },
+                reject: () => {
+                    //callback to execute when user rejects the action
+                }
+            });
+            }else{
+                this.$confirm.require({
+                message: 'Vous devez être connecté pour emprunter cet article, voulez vous connecter ?',
+                header: 'Prêt bloqué',
+                icon: 'pi pi-lock',
+                acceptLabel: "Oui",
+                rejectLabel : "Non",
+                rejectIcon:'pi pi-trash',
+                acceptIcon:'pi pi-check-square',
+                blockScroll: false,
+                accept: () => {
+                    //callback to execute when user confirms the action
+                },
+                reject: () => {
+                    //callback to execute when user rejects the action
+                }
+            });
+            }
+        }
     }
+
 
 }
 </script>
@@ -69,7 +121,7 @@ export default {
 }
 .card:hover:before
 {
-    transform: skewY(390deg);
+    transform: rotate(390deg);
 }
 
 .card .imgBx
@@ -99,6 +151,7 @@ export default {
         height: 260px;
         img{
             transform: scale(50%);
+
         }
     }
     .contentBx{
@@ -172,6 +225,7 @@ export default {
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: 0.5s;
+    cursor: pointer;
 }
 
 </style>
