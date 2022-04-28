@@ -12,6 +12,8 @@ export default function fetchData(data,method='post'){
         }    
     }else if(method==="post"){
         options ={...options,body:new URLSearchParams(data),credentials:"include"}
+    }else if(method==='formdata'){
+        options = {method:'post',body:data}
     }
 
     return fetch(url,options)

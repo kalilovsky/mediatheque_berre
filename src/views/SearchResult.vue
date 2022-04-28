@@ -1,6 +1,14 @@
 <template>
     <div class="homeSearch">
         <div class="filterBar">
+            <h2>Filtres Avancés</h2>
+            <div class="tag">
+                <Tag :value="categories[0].categorieName" icon="pi pi-times" v-if="filter.filterByCat.length>0 && categories.length>0" @click="filter.filterByCat=''"></Tag>
+                <Tag :value="subCategories[0].SubcategorieName" icon="pi pi-times" v-if="filter.filterBySubCat.length>0 && subCategories.length>0" @click="filter.filterBySubCat=''"></Tag>
+                <Tag :value="collections[0].collectionName" icon="pi pi-times" v-if="filter.filterByCol.length>0 && collections.length>0" @click="filter.filterByCol=''"></Tag>
+                <Tag :value="authors[0].author" icon="pi pi-times" v-if="filter.filterByAuthor.length>0 && authors.length>0" @click="filter.filterByAuthor=''"></Tag>
+                <Tag :value="editors[0].editor" icon="pi pi-times" v-if="filter.filterByEditor.length>0 && editors.length>0" @click="filter.filterByEditor=''"></Tag>
+            </div>
             <Dropdown v-model="filter.filterByCat" :options="categories" optionValue="idCategorie"
                 optionLabel="categorieName" placeholder="Par Catégorie" />
             <Dropdown v-model="filter.filterBySubCat" :options="subCategories" optionLabel="SubcategorieName"
@@ -80,6 +88,7 @@ export default {
         filter: {
             handler() {
                 this.getFiltredArticles();
+                
             },
             deep: true,
         },
@@ -151,27 +160,35 @@ export default {
 .homeSearch {
     position: relative;
     min-height: 100vh;
-    min-width: 100%;
+    max-width: 80%;
     padding: 90px 0px;
-    left: 0;
+    left: 20%;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     justify-items: center;
     align-content: center;
 
     .filterBar {
         position: fixed;
         background: white;
-        width: 100%;
-        height: 50px;
+        width: 20%;
+        height: calc(100% - 100px);
         z-index: 50;
-        border: 1px solid #dee2e6;
+        border-right: 1px solid #dee2e6;
         ;
         display: flex;
+        flex-direction: column;
         align-items: center;
         gap: 20px;
         justify-content: center;
         top: 100px;
+        left: 0;
+        .tag{
+            .p-tag{
+                cursor: pointer;
+            }
+        }
+        
     }
 }
 </style>

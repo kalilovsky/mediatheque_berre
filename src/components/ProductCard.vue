@@ -57,6 +57,7 @@ export default {
                 },
                 reject: () => {
                     //callback to execute when user rejects the action
+                    
                 }
             });
             }else{
@@ -68,9 +69,10 @@ export default {
                 rejectLabel : "Non",
                 rejectIcon:'pi pi-trash',
                 acceptIcon:'pi pi-check-square',
+                acceptClass:'p-button-danger',
                 blockScroll: false,
                 accept: () => {
-                    //callback to execute when user confirms the action
+                    store.commit({type:'updateToggleLoginForm',toggleLoginForm :!store.state.toggleLoginForm})
                 },
                 reject: () => {
                     //callback to execute when user rejects the action
@@ -121,7 +123,8 @@ export default {
 }
 .card:hover:before
 {
-    transform: rotate(390deg);
+    top:-70%;
+    transform: skewY(390deg);
 }
 
 .card .imgBx

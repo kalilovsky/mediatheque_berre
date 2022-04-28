@@ -80,7 +80,6 @@ export default {
         },
         toLocaleDate(text) {
             let test = new Date(text).toLocaleDateString('fr-FR');
-            console.log(text);
             return test;
         },
         isLate(text, duration) {
@@ -143,7 +142,6 @@ export default {
         this.unsubscribe = store.subscribe((mutation)=>{
         if(mutation.type === "updateUserInfo"){
             this.isConnected = store.state.userInfo.isConnected;
-            console.log(store.state.userInfo.isConnected);
         }
         })
         },

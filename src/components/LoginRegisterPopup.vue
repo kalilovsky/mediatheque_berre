@@ -17,7 +17,8 @@
             <div class="form signinForm">
                 <form>
                     <h3>Connection</h3>
-                    <input type="text" v-model="v$.loginUserInfo.email.$model" name="" placeholder="Pseudo ou Email" @input="check">
+                    <input type="text" v-model="v$.loginUserInfo.email.$model" name="" placeholder="Pseudo ou Email" >
+                    <!-- @input="check" -->
                     <Password v-model="v$.loginUserInfo.pwd.$model" toggleMask :feedback="false"  placeholder="Mots de passe"></Password>
                     <input type="submit" name="" value="Connection" @click="handleLogin">
                 </form>
@@ -129,10 +130,9 @@ export default {
         })
     },
     methods: {
-        check() {
-            this.v$.$validate().then(data => console.log(data))
-            console.log(this.v$.registerUserInfo.email.$errors);
-        },
+        // check() {
+        //     this.v$.$validate().then(data => console.log(data))
+        // },
         signupFormPage2(){
             this.toggleFormPage2 = !this.toggleFormPage2;
             this.toggleFormPage1 = !this.toggleFormPage1;

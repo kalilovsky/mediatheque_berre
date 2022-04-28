@@ -3,26 +3,28 @@
   <div class="navigation" :class="{active : toggleDropDownMenu }" @click="toggleDropDownMenu= !toggleDropDownMenu" v-if="userInfo.isConnected===true">
       <div class="userBx">
         <div class="imgBx">
-          <img src="../assets/user.jpg">
+          <img :src="'http://localhost:3000/public/userprofile/'+userInfo.photo">
         </div>
-        <p class="username">Alina Smith</p>
+        <p class="username">{{userInfo.firstname +' ' + userInfo.lastname}}</p>
       </div>
       <div class="menuToggle"></div>
       <ul class="menu">
         <li><router-link to="/"> <i class="pi pi-home"></i> Accueil</router-link></li>
+        <li><router-link to="/search"> <i class="pi pi-search"></i> Recherche Avancée</router-link></li>
+        <li v-if="userInfo.userType ==='admin'"><router-link to="/admindashboard"> <i class="pi pi-server"></i> Tableau de Bord</router-link></li>
         <li><router-link to="/loans"> <i class="pi pi-bell"></i> Mes Emprunts</router-link></li>
-        <li><a href="#"> <i class="pi pi-user"></i> My Profile</a></li>
+        <!-- <li><a href="#"> <i class="pi pi-user"></i> My Profile</a></li>
         <li><a href="#"> <i class="pi pi-comment"></i> Messages</a></li>
         <li><a href="#"> <i class="pi pi-cog"></i> Settings</a></li>
-        <li><a href="#"> <i class="pi pi-question"></i> Help & Support</a></li>
-        <li @click="disconnect"><a href="#"> <i class="pi pi-sign-out"></i>Logout</a></li>
+        <li><a href="#"> <i class="pi pi-question"></i> Help & Support</a></li> -->
+        <li @click="disconnect"><a href="#"> <i class="pi pi-sign-out"></i>Déconnection</a></li>
       </ul>
   </div>
     <div class="login" v-else>
-        <Button label="Connection" icon="pi pi-sign-in" iconPos="right" class="p-button-secondary p-button-outlined p-button-rounded" @click="toggleLoginForm = ! toggleLoginForm"/>
+        <Button label="Connection" icon="pi pi-sign-in" iconPos="right" class="p-button-secondary p-button-outlined p-button-rounded" @click="toggleLoginFormMethod"/>
         <transition name="login">
-          <div class="loginContainer" v-if="toggleLoginForm" @click="toggleLoginForm = ! toggleLoginForm">
-          <LoginRegisterPopup @click.prevent.stop="preventClick" @logged="logged"></LoginRegisterPopup>
+          <div class="loginContainer" v-if="toggleLoginForm" @click="toggleLoginFormMethod">
+          <LoginRegisterPopup @click.prevent.stop="preventClick"></LoginRegisterPopup>
           </div>
         </transition>
     </div>
@@ -50,10 +52,15 @@ export default {
     },
     created(){
       this.userInfo = store.state.userInfo;
+      this.toggleLoginForm = store.state.toggleLoginForm
       this.unsubscribe = store.subscribe((mutation)=>{
             if(mutation.type === "updateUserInfo"){
                 this.userInfo = store.state.userInfo;
             }
+            if(mutation.type === "updateToggleLoginForm"){
+                this.toggleLoginForm = store.state.toggleLoginForm;
+            }
+            
         })
     },
     beforeUnmount() {
@@ -68,14 +75,12 @@ export default {
             store.commit({type : "updateUserInfo", userInfo :  {isConnected : 'false',}});
             this.$toast.add({severity: 'info', summary: 'Déconnection Réussie', detail: `Au Revoir!`, group: 'tl', life: 3000});
             this.toggleLoginForm = false;
-            console.log(data);
           }
         });
       },
-      logged(data){
-        console.log(data);
-        // this.$toast.add({severity: 'info', summary: 'Connection Réussie', detail: `Bienvenue ${data.pseudo}`, group: 'tl', life: 3000});
-      }
+      toggleLoginFormMethod(){
+        store.commit({type:'updateToggleLoginForm',toggleLoginForm :!store.state.toggleLoginForm})
+      },
     },
 }
 </script>
@@ -123,7 +128,7 @@ export default {
   justify-content: space-between;
   transition: height 0.5s, width 0.5s;
   transition: 0.5s;
-  transition-delay: 0s,0.75s;
+  // trans  ition-delay: 0s,0.75s;
   overflow: hidden;
   box-shadow: 0 25px 35px rgba(0,0,0,0.1);
   border: 1px solid rgba(0,0,0,0.3);
@@ -133,10 +138,10 @@ export default {
 {
   // transform: scaleY(4) scaleX(2);
   width: 300px;
-  height: 390px;
+  height: 300px;
   transition: 0.5s;
   transition: width 0.5s, height 0.5s;
-  transition-delay: 0s,0.75s;
+  // transition-delay: 0s,0.75s;
 }
 .navigation .menuToggle 
 {
