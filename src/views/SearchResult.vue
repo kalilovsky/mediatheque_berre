@@ -21,7 +21,7 @@
                 placeholder="Par Editeurs" />
             <Button @click="resetFilter">Réinitialser les filtres</Button>
         </div>
-        <template v-if="articles.length">
+        <template v-if="!isLoading">
 
             <template v-for="(article, articleKey) in articles" :key="articleKey">
                 <Product :idArticle="article.idArticle" :url="article.filePath" :title="article.title"
@@ -31,10 +31,12 @@
                 </Product>
             </template>
         </template>
-        <template v-else>
-            <ProgressSpinner />
-        </template>
 
+        <template v-else>
+            <div class="progress">
+               <ProgressSpinner />
+            </div>
+        </template>
     </div>
 </template>
 
@@ -70,7 +72,8 @@ export default {
                 filterByCol: "",
                 filterByAuthor: "",
                 filterByEditor: "",
-            }
+            },
+            isLoading : false,
         })
     },
     created() {
@@ -95,6 +98,7 @@ export default {
     },
     methods: {
         getFiltredArticles() {
+            this.isLoading=true;
             fetchData({ controller: "articlesController", action: "searchArticles", text: this.filter.filterByText, idCategory: this.filter.filterByCat, idSubCategorie: this.filter.filterBySubCat, author: this.filter.filterByAuthor, editor: this.filter.filterByEditor, idCollection: this.filter.filterByCol }).then(data => {
                 if (data.length >= 0) {
                     this.articles = data;
@@ -103,6 +107,7 @@ export default {
                     this.collections = this.getCollections(data);
                     this.authors = this.getAuthors(data);
                     this.editors = this.getEditors(data);
+                    this.isLoading=false;
                 }
             })
         },
@@ -151,6 +156,7 @@ export default {
                 filterByAuthor: "",
                 filterByEditor: "",
             }
+            store.commit({type:'updateTextFilterCritera',filter:{filterByText:this.filter.filterByText}})
         },
     }
 }
@@ -189,6 +195,13 @@ export default {
             }
         }
         
+        
     }
+    .progress{
+            grid-column-start: 1;
+            grid-column-end: 3;
+            display: flex;
+            justify-content: center;
+        }
 }
 </style>

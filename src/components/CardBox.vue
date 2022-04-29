@@ -1,6 +1,7 @@
 <template>
   <div class="cardBox">
 				<div class="cardkpi">
+					<router-link to="/admindashboard/users"></router-link>
 					<div>
 						<div class="numbers">{{nbrUsers}}</div>
 						<div class="cardName">Utilisateurs</div>
@@ -10,6 +11,7 @@
 					</div>
 				</div>
 				<div class="cardkpi">
+					<router-link to="/admindashboard/articles"></router-link>
 					<div>
 						<div class="numbers">{{nbrArticles}}</div>
 						<div class="cardName">Articles</div>
@@ -19,6 +21,7 @@
 					</div>
 				</div>
 				<div class="cardkpi">
+					<router-link to="/admindashboard/loans"></router-link>
 					<div>
 						<div class="numbers">{{nbrLoans}}</div>
 						<div class="cardName">Prêts</div>
@@ -82,6 +85,14 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	cursor: pointer;
+	a{
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		left: 0;
+		top : 0;
+		z-index: 10;
+	}
 }
 .cardBox .cardkpi .numbers 
 {

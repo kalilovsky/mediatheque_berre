@@ -58,7 +58,8 @@
             </span>
         </div>
         <div class="button">
-            <Button type="button" label="Mise à jour" icon="pi pi-upload" :loading="updateLoading" @click="updateArticle" />
+            <Button v-if="!isAddArticle" type="button" label="Mise à jour" icon="pi pi-upload" :loading="updateLoading" @click="updateArticle" />
+            <Button v-else type="button" label="Ajouter" icon="pi pi-upload" :loading="updateLoading" @click="addArticle" />
         </div>
 
     </Dialog>
@@ -83,7 +84,7 @@ export default {
         Dropdown,
         Button,
     },
-    props: ['loan', 'loanPopup1','loans'],
+    props: ['loan', 'loanPopup1','loans', 'isAddArticle'],
     data() {
         return {
             urlImage: "",
@@ -100,6 +101,7 @@ export default {
     created() {
         this.urlImage = store.state.urlImage;
         // this.loanPopup = this.loanPopup1;
+        this.myLoan = this.loan; 
 
     },
     // mounted(){
@@ -114,9 +116,24 @@ export default {
             if (!this.loanPopup) {
                 this.$emit('loanPopup')
             }
+            if(this.loanPopup===true){
+                this.myLoan = this.loan;
+                this.getCategories();
+                this.getSubCategoties();
+                this.getAuthors();
+                this.getEditors();
+                this.getCollections();
+            }
         },
         loan(){
             this.myLoan = this.loan;
+            this.getCategories();
+            this.getSubCategoties();
+            this.getAuthors();
+            this.getEditors();
+            this.getCollections();
+        },
+        myLoan(){
             this.getCategories();
             this.getSubCategoties();
             this.getAuthors();
@@ -126,6 +143,33 @@ export default {
 
     },
     methods:{
+        addArticle(){
+            if(store.state.userInfo.isConnected ===true){
+                this.updateLoading = !this.updateLoading;
+                this.$confirm.require({
+                    message: 'Êtes-vous sûre de vouloir ajouter cet article ?',
+                    header: 'Confirmation',
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        fetchData({controller : 'articlesController', action:'addArticle',...this.myLoan}).then(data=>{
+                            if(data==="Article inséré correctement"){
+                                this.$toast.add({severity:'success', summary: 'Acomplie', detail:'Article ajouté avec succées.',group: 'tl', life: 3000});
+                                this.updateLoading = !this.updateLoading;
+                                this.updateLoading = !this.updateLoading;
+                                this.$emit('addArticles');
+                                this.loanPopup = !this.loanPopup;
+                            }
+                        })
+                        //callback to execute when user confirms the action
+                    },
+                    reject: () => {
+                        //callback to execute when user rejects the action
+                    }
+                });
+            }else{
+                this.$toast.add({severity:'success', summary: 'Attention', detail:'Connectez vous pour pouvoir inserez un article',group: 'tl', life: 3000});
+            }
+        },
         updateArticle(){
             this.updateLoading = !this.updateLoading
             this.$confirm.require({
@@ -157,9 +201,15 @@ export default {
             this.categories = cat2;
         },
         getSubCategoties() {
-            fetchData({controller :'articlesController', action:'getAllSubCategories', idCategorie: this.loan.idCategory}).then(data=>{
-                this.subCategories = data;
-            })
+            if (this.loan.idCategory){
+                fetchData({controller :'articlesController', action:'getAllSubCategories', idCategorie: this.loan.idCategory}).then(data=>{
+                    this.subCategories = data;
+                })
+            }else{
+                fetchData({controller :'articlesController', action:'getAllSubCategories'}).then(data=>{
+                    this.subCategories = data;
+                })
+            }
         },
         updateSubCat(){
             fetchData({controller :'articlesController', action:'getAllSubCategories', idCategorie: this.myLoan.idCategory}).then(data=>{
@@ -258,9 +308,12 @@ export default {
         }
     }
     .button{
-        width: 50%;
+        width: 100%;
         justify-content: center;
         display: flex;
+        button{
+            width: 30% !important;
+        }
     }
     
 </style>

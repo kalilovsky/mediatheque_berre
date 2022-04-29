@@ -6,7 +6,7 @@
         <div class="field col-12 md:col-4">
             <span class="p-float-label p-input-icon-right">
                 <i class="pi pi-search" />
-                <InputText id="inputtext-right" type="text" v-model="valueIconRight" @keydown.enter="handelSearchText"/>
+                <InputText id="inputtext-right" type="text" v-model="filterByText" @keydown.enter="handelSearchText"/>
                 <label for="inputtext-right">Rechercher</label>
                 
             </span>
@@ -29,6 +29,7 @@ export default {
     data() {
         return {
             userInfo:{},
+            filterByText:'',
         }    
     },
     methods: {
@@ -59,6 +60,16 @@ export default {
     },
     mounted(){
         this.readCookie();
+    },
+    created(){
+        this.unsubscribe = store.subscribe((mutation) => {
+            if (mutation.type === "updateTextFilterCritera") {
+                this.filterByText = store.state.filterCriteria.filterByText;
+            }
+        })
+    },
+    beforeUnmount(){
+        this.unsubscribe();
     },
     watch:{
         userInfo(){
