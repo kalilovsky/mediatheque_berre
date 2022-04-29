@@ -3,7 +3,7 @@
   <div class="navigation" :class="{active : toggleDropDownMenu }" @click="toggleDropDownMenu= !toggleDropDownMenu" v-if="userInfo.isConnected===true">
       <div class="userBx">
         <div class="imgBx">
-          <img :src="'http://localhost:3000/public/userprofile/'+userInfo.photo">
+          <img :src="imageUrl+'userprofile/'+userInfo.photo">
         </div>
         <p class="username">{{userInfo.firstname +' ' + userInfo.lastname}}</p>
       </div>
@@ -24,7 +24,7 @@
         <Button label="Connection" icon="pi pi-sign-in" iconPos="right" class="p-button-secondary p-button-outlined p-button-rounded" @click="toggleLoginFormMethod"/>
         <transition name="login">
           <div class="loginContainer" v-if="toggleLoginForm" @click="toggleLoginFormMethod">
-          <LoginRegisterPopup @click.prevent.stop="preventClick"></LoginRegisterPopup>
+          <LoginRegisterPopup @click.prevent.stop="preventClick" @togglePopup="toggleLoginFormMethod"></LoginRegisterPopup>
           </div>
         </transition>
     </div>
@@ -48,11 +48,13 @@ export default {
             toggleLoginForm : false,
             toggleDropDownMenu : false,
             userInfo :{},
+            imageUrl:"",
     })
     },
     created(){
       this.userInfo = store.state.userInfo;
       this.toggleLoginForm = store.state.toggleLoginForm
+      this.imageUrl = store.state.urlImage;
       this.unsubscribe = store.subscribe((mutation)=>{
             if(mutation.type === "updateUserInfo"){
                 this.userInfo = store.state.userInfo;

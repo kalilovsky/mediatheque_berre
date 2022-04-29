@@ -7,7 +7,7 @@
             <span class="p-float-label p-input-icon-right">
                 <i class="pi pi-search" />
                 <InputText id="inputtext-right" type="text" v-model="filterByText" @keydown.enter="handelSearchText"/>
-                <label for="inputtext-right">Rechercher</label>
+                <label for="inputtext-right">Recherche Avancée</label>
                 
             </span>
         </div>

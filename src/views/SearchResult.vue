@@ -25,13 +25,14 @@
 
             <template v-for="(article, articleKey) in articles" :key="articleKey">
                 <Product :idArticle="article.idArticle" :url="article.filePath" :title="article.title"
-                    :subCat="article.categorieName" :author="article.author" @reloadArticles="getFiltredArticles">
+                    :subCat="article.categorieName" :author="article.author" @reloadArticles="getFiltredArticles" @click="showPopupFn(article)">
                     <Tag class="myTag" value="Disponible" severity="success" rounded v-if="~~article.stock > 0"></Tag>
                     <Tag class="myTag" value="Indisponible" severity="danger" rounded v-else></Tag>
                 </Product>
             </template>
+            <ArticlePopupHome :loans="loans" :loan="selectedArticle" :loanPopup1="showPopup" @loanPopup="showPopup = !showPopup"></ArticlePopupHome>
         </template>
-
+        
         <template v-else>
             <div class="progress">
                <ProgressSpinner />
@@ -48,6 +49,7 @@ import Product from "../components/ProductCard.vue"
 import Tag from 'primevue/tag';
 import Dropdown from 'primevue/dropdown';
 import Button from "primevue/button";
+import ArticlePopupHome from "../components/Admin/ArticlePopupHome.vue"
 
 export default {
     components: {
@@ -56,6 +58,7 @@ export default {
         Tag,
         Dropdown,
         Button,
+        ArticlePopupHome,
     },
     data() {
         return ({
@@ -74,6 +77,8 @@ export default {
                 filterByEditor: "",
             },
             isLoading : false,
+            selectedArticle:{},
+            showPopup : false,
         })
     },
     created() {
@@ -97,6 +102,10 @@ export default {
         },
     },
     methods: {
+        showPopupFn(article){
+      this.selectedArticle = article;
+      this.showPopup = !this.showPopup;
+    },
         getFiltredArticles() {
             this.isLoading=true;
             fetchData({ controller: "articlesController", action: "searchArticles", text: this.filter.filterByText, idCategory: this.filter.filterByCat, idSubCategorie: this.filter.filterBySubCat, author: this.filter.filterByAuthor, editor: this.filter.filterByEditor, idCollection: this.filter.filterByCol }).then(data => {

@@ -4,8 +4,7 @@
         <div class="blueBg" :class="{ active: registerFormFocused }">
             <div class="box signin">
                 <h2>Vous avez déja un compte ?</h2>
-                <button class="signinBtn"
-                    @click="loginFormToggle">Connection</button>
+                <button class="signinBtn" @click="loginFormToggle">Connection</button>
             </div>
             <div class="box signup">
                 <h2>Vous n'avez pas encore de compte ?</h2>
@@ -17,21 +16,22 @@
             <div class="form signinForm">
                 <form>
                     <h3>Connection</h3>
-                    <input type="text" v-model="v$.loginUserInfo.email.$model" name="" placeholder="Pseudo ou Email" >
+                    <input type="text" v-model="v$.loginUserInfo.email.$model" name="" placeholder="Pseudo ou Email">
                     <!-- @input="check" -->
-                    <Password v-model="v$.loginUserInfo.pwd.$model" toggleMask :feedback="false"  placeholder="Mots de passe"></Password>
+                    <Password v-model="v$.loginUserInfo.pwd.$model" toggleMask :feedback="false"
+                        placeholder="Mots de passe"></Password>
                     <input type="submit" name="" value="Connection" @click="handleLogin">
                 </form>
             </div>
-            <div class="form signupForm" :class="{hide : !toggleFormPage1}">
+            <div class="form signupForm" :class="{ hide: !toggleFormPage1 }">
                 <form>
                     <h3>Inscription 1/2</h3>
                     <span class="p-input-icon-right">
-                        <InputText type="text" v-model="v$.registerUserInfo.pseudo.$model" placeholder="Pseudo"/>
+                        <InputText type="text" v-model="v$.registerUserInfo.pseudo.$model" placeholder="Pseudo" />
                         <i class="pi pi-user" />
                     </span>
                     <span class="p-input-icon-right">
-                        <InputText type="email" v-model="v$.registerUserInfo.email.$model" placeholder="Email"/>
+                        <InputText type="email" v-model="v$.registerUserInfo.email.$model" placeholder="Email" />
                         <i class="pi pi-envelope" />
                     </span>
                     <Password v-model="v$.registerUserInfo.pwd.$model" toggleMask placeholder="Mots de passe">
@@ -53,7 +53,7 @@
                     <input type="submit" id="nextButton" name="" value="Suivant" @click="signupFormPage2">
                 </form>
             </div>
-            <div class="form signupFormPage2" :class="{active : toggleFormPage2}">
+            <div class="form signupFormPage2" :class="{ active: toggleFormPage2 }">
                 <form>
                     <h3>Inscription 2/2</h3>
                     <span class="p-input-icon-right">
@@ -69,7 +69,8 @@
                         <i class="pi pi-map" />
                     </span>
                     <span class="p-input-icon-right">
-                        <InputMask v-model="v$.registerUserInfo.telephone.$model" placeholder="Téléphone" mask="99-99-99-99-99" />
+                        <InputMask v-model="v$.registerUserInfo.telephone.$model" placeholder="Téléphone"
+                            mask="99-99-99-99-99" />
                         <i class="pi pi-phone" />
                     </span>
                     <span id="buttonSpan">
@@ -84,13 +85,14 @@
 
 <script>
 import useVuelidate from '@vuelidate/core'
-import { required, email} from '@vuelidate/validators'
+import { required, email } from '@vuelidate/validators'
 import Password from 'primevue/password';
 import InputText from 'primevue/inputtext';
 import InputMask from 'primevue/inputmask';
 import fetchData from '@/utils/fetchData';
 import Toast from 'primevue/toast';
 import store from '@/store';
+import router from '@/router';
 
 
 export default {
@@ -110,8 +112,8 @@ export default {
         return ({
             loginFormFocused: true,
             registerFormFocused: false,
-            toggleFormPage2 : false,
-            toggleFormPage1 : true,
+            toggleFormPage2: false,
+            toggleFormPage1: true,
             registerUserInfo: {
                 firstname: "",
                 lastname: "",
@@ -122,92 +124,118 @@ export default {
                 adresse: "",
                 telephone: "",
             },
-            loginUserInfo :{
-                email :"",
+            loginUserInfo: {
+                email: "",
                 pwd: "",
             },
-            userInfo:{},
+            userInfo: {},
         })
     },
     methods: {
         // check() {
         //     this.v$.$validate().then(data => console.log(data))
         // },
-        signupFormPage2(){
+        signupFormPage2() {
             this.toggleFormPage2 = !this.toggleFormPage2;
             this.toggleFormPage1 = !this.toggleFormPage1;
         },
-        loginFormToggle(){
+        loginFormToggle() {
             this.registerFormFocused = !this.registerFormFocused;
             this.toggleFormPage2 = false;
             this.toggleFormPage1 = true;
         },
-        handleRegister(){
-            if(!this.v$.registerUserInfo.$errors.length){
-                fetchData({controller : 'UsersController', action : 'register',...this.registerUserInfo},"post").then(data=>{
-                    if(data.isConnected){
-                    this.userInfo = data;
-                    this.$toast.add({severity: 'info', summary: 'Inscription Réussie', detail: `Bienvenue ${data.pseudo}`, group: 'tl', life: 3000});
-                    }else{
+        handleRegister() {
+            if (!this.v$.registerUserInfo.$errors.length) {
+                fetchData({ controller: 'UsersController', action: 'register', ...this.registerUserInfo }, "post").then(data => {
+                    if (data.isConnected) {
                         this.userInfo = data;
-                        this.$toast.add({severity: 'error', summary: 'Erreur', detail: `${data.messageRegister}`, group: 'tl', life: 5000});
+                        this.$toast.add({ severity: 'info', summary: 'Inscription Réussie', detail: `Bienvenue ${data.pseudo}`, group: 'tl', life: 3000 });
+                        this.handleLateLoans();
+                        this.$emit('togglePopup');
+                    } else {
+                        this.userInfo = data;
+                        this.$toast.add({ severity: 'error', summary: 'Erreur', detail: `${data.messageRegister}`, group: 'tl', life: 5000 });
                     }
-                }).catch(e=>console.warn(e));
-            }else{
-                for (let error of this.v$.registerUserInfo.$errors){
-                    this.$toast.add({severity: 'error', summary: 'Erreur', detail: `${error.$property} : ${error.$message}`, group: 'tl', life: 5000});
+                }).catch(e => console.warn(e));
+            } else {
+                for (let error of this.v$.registerUserInfo.$errors) {
+                    this.$toast.add({ severity: 'error', summary: 'Erreur', detail: `${error.$property} : ${error.$message}`, group: 'tl', life: 5000 });
                 }
             }
         },
-        handleLogin(){
-            if(!this.v$.loginUserInfo.$errors.length){
-                fetchData({controller : 'UsersController', action : 'login',...this.loginUserInfo},"post").then(data=>{
-                    if(data.isConnected){
+        handleLogin() {
+            if (!this.v$.loginUserInfo.$errors.length) {
+                fetchData({ controller: 'UsersController', action: 'login', ...this.loginUserInfo }, "post").then(data => {
+                    if (data.isConnected) {
 
                         // this.$emit("logged",data);
                         this.userInfo = data;
-                        this.$toast.add({severity: 'success', summary: 'Connection Réussie', detail: `Bienvenue ${data.pseudo}`, group: 'tl', life: 3000});
-                    }else{
+                        this.$toast.add({ severity: 'success', summary: 'Connection Réussie', detail: `Bienvenue ${data.pseudo}`, group: 'tl', life: 3000 });
+                        this.handleLateLoans();
+                        this.$emit('togglePopup');
+                    } else {
                         this.userInfo = data;
-                        this.$toast.add({severity: 'error', summary: 'Erreur', detail: `${data.messageLogin}`, group: 'tl', life: 5000});
+                        this.$toast.add({ severity: 'error', summary: 'Erreur', detail: `${data.messageLogin}`, group: 'tl', life: 5000 });
                     }
                     // setTimeout(this.test(),3000);
 
-                }).catch(e=>console.warn(e));
-            }else{
-                for (let error of this.v$.loginUserInfo.$errors){
-                    this.$toast.add({severity: 'error', summary: 'Erreur', detail: `${error.$property} : ${error.$message}`, group: 'tl', life: 5000});
+                }).catch(e => console.warn(e));
+            } else {
+                for (let error of this.v$.loginUserInfo.$errors) {
+                    this.$toast.add({ severity: 'error', summary: 'Erreur', detail: `${error.$property} : ${error.$message}`, group: 'tl', life: 5000 });
                 }
             }
         },
-        // test(){
-        //     this.$emit("click1","login");
-        // },
-    },
-    validations() {
-        return {
-            registerUserInfo :{
-                firstname: { required },
-                lastname :{ required },
-                email: { required, email },
-                pseudo :{ required },
-                pwd: { required },
-                // pwd2: {sameAs:sameAs(this.pwd)},
-                adresse :{ required },
-                telephone :{ required },
-            },
-            loginUserInfo :{
-                email :{ required },
-                pwd: { required },
-            }
-        }
-    },
-    watch:{
-        userInfo(){
-            store.commit({type : "updateUserInfo", userInfo : this.userInfo});
+        handleLateLoans() {
+            fetchData({ controller: "loansController", action: "getLateLoans", idUser: this.userInfo.idUser }).then(data => {
+                if (Object.keys(data).length) {
+                    // store.commit({type:'updateLateLoans',lateLoans:data});
+                    // this.$toast.add({ severity: 'error', summary: 'Attention', detail: `Il y'a ${data.length} de retard de prêt`, group: 'tl', life: 5000 });
+                    this.$confirm.require({
+                        message: `Vous avez ${data.length} articles en retard de prêt, voulez vous les visualiser ?`,
+                        header: 'Attention !',
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            //callback to execute when user confirms the action
+                            router.push({ path: '/loans' });
+                        },
+                        reject: () => {
+                            //callback to execute when user rejects the action
+                        }
+                    });
 
-        }
+                }
+            })
+        },
     },
+    // test(){
+    //     this.$emit("click1","login");
+    // },
+
+validations() {
+    return {
+        registerUserInfo: {
+            firstname: { required },
+            lastname: { required },
+            email: { required, email },
+            pseudo: { required },
+            pwd: { required },
+            // pwd2: {sameAs:sameAs(this.pwd)},
+            adresse: { required },
+            telephone: { required },
+        },
+        loginUserInfo: {
+            email: { required },
+            pwd: { required },
+        }
+    }
+},
+watch: {
+    userInfo(){
+        store.commit({ type: "updateUserInfo", userInfo: this.userInfo });
+
+    }
+},
     
     
 }
@@ -281,17 +309,20 @@ export default {
     box-shadow: 0 5px 45px rgba(0, 0, 0, 0.25);
     transition: 0.5s ease-in-out;
     overflow: hidden;
-    .signupFormPage2{
+
+    .signupFormPage2 {
         left: 100% !important;
         transition-delay: 0s;
     }
-    &.active{
-        .signupFormPage2.active{
+
+    &.active {
+        .signupFormPage2.active {
             left: 0 !important;
             transition-delay: 0s;
         }
-        .signupForm{
-            &.signupForm.hide{
+
+        .signupForm {
+            &.signupForm.hide {
                 transition: 0.3s;
                 opacity: 0;
             }
@@ -335,15 +366,18 @@ export default {
     width: 100%;
     display: flex;
     flex-direction: column;
-    #nextButton,#previousButton{
+
+    #nextButton,
+    #previousButton {
         background: #03a9f4;
         align-self: flex-end;
     }
-    #buttonSpan{
+
+    #buttonSpan {
         display: flex;
         justify-content: space-between;
     }
-    
+
 }
 
 .formBx form h3 {
@@ -373,6 +407,7 @@ export default {
 .formBx .signupForm form input[type="submit"] {
     background: #f43648;
 }
+
 .formBx .signupFormPage2 form input[type="submit"] {
     background: #f43648;
 }

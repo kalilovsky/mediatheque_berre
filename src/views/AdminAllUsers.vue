@@ -37,7 +37,7 @@ export default {
 </script>
 
 <style>
-      .cardBoxLoans {
+  .cardBoxLoans {
   position: relative;
   width: calc(100% - 300px);
   top: 40px;

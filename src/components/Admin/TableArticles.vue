@@ -8,7 +8,7 @@
                     <h5 class="mb-2 md:m-0 p-as-md-center">{{tableTitle}}</h5>
                     <span class="p-input-icon-left">
                         <i class="pi pi-search" />
-                        <Button icon="pi pi-plus" class="p-button-rounded p-button-success" @click="addArticlePopup=!addArticlePopup"/>
+                        <Button icon="pi pi-plus" class="p-button-rounded p-button-success" @click="addArticlePopup=!addArticlePopup" label="Ajouter"/>
                         <InputText v-model="filters['global'].value" placeholder="Search..." />
                         <Button label="Export" icon="pi pi-upload" class="p-button-info mr-2"
                             @click="exportCSV($event)" />

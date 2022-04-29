@@ -1,25 +1,42 @@
-<template>
-  <NavigationMenuAdmin></NavigationMenuAdmin>
-  <Toast position="top-right" group="tl" />
-  <router-view ></router-view>
+<template >
+  <NavigationMenuAdmin v-if="isConnected === true && userType==='admin'"></NavigationMenuAdmin>
+  <!-- <Toast position="top-right" group="tl" /> -->
+  <router-view v-if="isConnected === true && userType==='admin'"></router-view>
+  <div v-else>
+    <p>Vous n'avez les privilèges pour pouvoir accéder à cet ressources!!</p>
+  </div>
 </template>
+
 
 <script>
 import NavigationMenuAdmin from "../components/NavigationMenuAdmin.vue"
-import Toast from 'primevue/toast';
+// import Toast from 'primevue/toast';
 import fetchData from '@/utils/fetchData'
 import store from '@/store';
 export default {
   components:{
     NavigationMenuAdmin,
-    Toast,
+    // Toast,
   },
   data(){
     return{
+      isConnected : false,
+      userType : '',
     }
   },
   created(){
     this.getLateLoans();
+    this.userType = store.state.userInfo.userType;
+    this.isConnected = store.state.userInfo.isConnected;
+    this.unsubscribe = store.subscribe((mutation)=>{
+      if(mutation.type === "updateUserInfo"){
+          this.isConnected = store.state.userInfo.isConnected;
+          this.userType = store.state.userInfo.userType;
+        }
+        })
+  },
+  beforeUnmount(){
+    this.unsubscribe();
   },
   methods: {
     getLateLoans(){

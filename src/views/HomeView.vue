@@ -6,7 +6,7 @@
           <div class="catContainer">
            <template v-for="(article, articleKey) in articles" :key="articleKey">
 
-            <Product v-if="article.categorieName === category.categorieName" :idArticle="article.idArticle" :url="article.filePath" :title="article.title" :subCat="article.categorieName" :author="article.author" @reloadArticles="getAllArticles">
+            <Product v-if="article.categorieName === category.categorieName" :idArticle="article.idArticle" :url="article.filePath" :title="article.title" :subCat="article.categorieName" :author="article.author" @reloadArticles="getAllArticles" @click="showPopupFn(article)">
               <Tag class="myTag" value="Disponible" severity="success" rounded v-if="~~article.stock>0"></Tag>
               <Tag class="myTag" value="Indisponible" severity="danger" rounded v-else></Tag>
             </Product>
@@ -14,6 +14,7 @@
           </div>
         </tab-panel>
       </tab-view>
+      <ArticlePopupHome :loans="loans" :loan="selectedArticle" :loanPopup1="showPopup" @loanPopup="showPopup = !showPopup"></ArticlePopupHome>
       <!-- <template v-for="(category, catKey) in categories" :key="catKey">
         <div class="catName">
           <p>{{ category.categorieName }}</p>
@@ -36,6 +37,7 @@
 <script>
 // @ is an alias to /src
 import Product from "../components/ProductCard.vue"
+import ArticlePopupHome from "../components/Admin/ArticlePopupHome.vue"
 import fetchData from "../utils/fetchData"
 import ProgressSpinner from 'primevue/progressspinner';
 import TabView from 'primevue/tabview';
@@ -50,12 +52,15 @@ export default {
     TabView,
     TabPanel,
     Tag,
+    ArticlePopupHome,
 
   },
   data() {
     return ({
       articles: {},
       categories: {},
+      selectedArticle:{},
+      showPopup : false,
     })
   },
   created() {
@@ -75,6 +80,10 @@ export default {
       data['controller'] = "ArticlesController";
       data['action'] = "getAllArticles";
       fetchData(data,"get").then(data => this.articles = data).catch(error=> console.warn(error) );
+    },
+    showPopupFn(article){
+      this.selectedArticle = article;
+      this.showPopup = !this.showPopup;
     }
   },
   watch: {

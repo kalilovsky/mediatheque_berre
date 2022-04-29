@@ -4,14 +4,14 @@
 			<!-- <img src="../assets/Apocalypto-DVD.jpg"> -->
 			<!-- <img src="../assets/Bach-The-Art-Of-Life.jpg"> -->
 			<!-- <img src="../assets/Demon-Slayer.jpg"> -->
-			<img :src="'http://localhost:3000/public/articlefile/'+url">
+			<img :src="imgUrl+'articlefile/'+url">
 		</div>
 		<div class="contentBx">
             <slot></slot>
 			<h3>{{title}}</h3>
             <hr>
 			<h2 class="price">'{{author}}'</h2>
-			<div class="buy" @click="handelLoan">Prendre</div> 
+			<div class="buy" @click.stop="handelLoan">Prendre</div> 
 		</div>
         <p>{{subCat}}</p>
 	</div>
@@ -26,6 +26,7 @@ export default {
     data(){
         return({
             text:"test",
+            imgUrl :"",
         })
     },
     component:{
@@ -33,7 +34,7 @@ export default {
     methods:{
         handelLoan(){
             let userInfo = store.state.userInfo;
-            if (userInfo.isConnected){
+            if (userInfo.isConnected===true){
                 this.$confirm.require({
                 message: `Confirmez-vous vouloir emprunter ${this.title}` ,
                 header: 'Confirmation',
@@ -80,6 +81,9 @@ export default {
             });
             }
         }
+    },
+    created(){
+        this.imgUrl = store.state.urlImage;
     }
 
 
@@ -97,6 +101,7 @@ export default {
     overflow: hidden;
     margin: 20px 0;
     justify-self: center;
+    cursor: pointer;
     p
     {
         z-index: 0;
