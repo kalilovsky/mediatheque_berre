@@ -124,9 +124,11 @@ export default {
                             if(data==="user added"){
                                 this.$toast.add({severity:'success', summary: 'Acomplie', detail:'utilisateur ajouté avec succées.',group: 'tl', life: 3000});
                                 this.updateLoading = !this.updateLoading;
-                                this.updateLoading = !this.updateLoading;
                                 this.$emit('addArticles');
                                 this.loanPopup = !this.loanPopup;
+                            }else{
+                                this.$toast.add({severity:'warn', summary: 'Erreur', detail:data,group: 'tl', life: 3000});
+                                this.updateLoading = !this.updateLoading;
                             }
                         })
                         //callback to execute when user confirms the action

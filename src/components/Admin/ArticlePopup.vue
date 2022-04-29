@@ -155,7 +155,6 @@ export default {
                             if(data==="Article inséré correctement"){
                                 this.$toast.add({severity:'success', summary: 'Acomplie', detail:'Article ajouté avec succées.',group: 'tl', life: 3000});
                                 this.updateLoading = !this.updateLoading;
-                                this.updateLoading = !this.updateLoading;
                                 this.$emit('addArticles');
                                 this.loanPopup = !this.loanPopup;
                             }
@@ -163,6 +162,7 @@ export default {
                         //callback to execute when user confirms the action
                     },
                     reject: () => {
+                        this.updateLoading = !this.updateLoading;
                         //callback to execute when user rejects the action
                     }
                 });
@@ -189,6 +189,7 @@ export default {
                     //callback to execute when user confirms the action
                 },
                 reject: () => {
+                    this.updateLoading = !this.updateLoading;
                     //callback to execute when user rejects the action
                 }
             });
