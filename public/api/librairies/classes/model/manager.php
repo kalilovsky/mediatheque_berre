@@ -12,6 +12,7 @@ abstract class Manager
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC];        
         try {
+            // $db = new PDO('mysql:host=mysql-mediatheque.alwaysdata.net;dbname=mediatheque_mkmediabdd;charset=utf8', '266190', 'Verclame',$options);
             $db = new PDO('mysql:host=localhost;dbname=mkMediaBdd;charset=utf8', 'khalil', 'root',$options);
             // $db = new PDO('mysql:host=i54jns50s3z6gbjt.chr7pe7iynqr.eu-west-1.rds.amazonaws.com;dbname=ye7bixnka5y0ro2o;charset=utf8', 'xoa19fqr9q160r20', 'pop08ividy63k71j',$options);
             return $db;

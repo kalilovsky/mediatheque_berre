@@ -1,9 +1,6 @@
 <template>
-  <div class="cardBoxLoans">
+  <div class="cardBoxArticles">
     <CardKPI :number="count.allArticles" :cardName="'Produits'" :icon="'pi-telegram'" ></CardKPI>
-    <CardKPI :number="count.finishedLoans" :cardName="'Rendu'" :icon="'pi-check-circle'" ></CardKPI>
-    <CardKPI :number="count.pendingLoans" :cardName="'En Attente'" :icon="'pi-clock'" ></CardKPI>
-    <CardKPI :number="count.lateLoans" :cardName="'En Retard'" :icon="'pi-exclamation-circle'" ></CardKPI>
   </div>
   <div class="TableAllLoans">
     <TableArticles :selectedLoans="allArticles" tableTitle="Tous les Articles" @updateArticles="getAllArticles" ></TableArticles>
@@ -53,14 +50,14 @@ export default {
 </script>
 
 <style>
-    .cardBoxLoans {
+    .cardBoxArticles {
   position: relative;
   width: calc(100% - 300px);
   top: 40px;
   left: 300px;
   padding: 20px 30px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-gap: 30px;
 }
 .TableAllLoans {

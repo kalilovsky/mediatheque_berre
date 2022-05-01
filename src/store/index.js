@@ -2,11 +2,10 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    url: 'http://localhost:3000/index.php',
-    urlImage:'http://localhost:3000/public/',
+    url: 'http://localhost:3000/public/api/index.php',
+    urlImage:'http://localhost:3000/public/api/public/',
     // url: './api/index.php',
-    // urlImage:'./api/public/',t:3000/index.php',
-    // urlImage:'http://localho
+    // urlImage:'./api/public/',
     userInfo: { isConnected: 'false', },
     filterCriteria: {
       filterByText: "",

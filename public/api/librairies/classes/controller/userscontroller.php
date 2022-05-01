@@ -26,57 +26,78 @@ class UsersController extends Controller{
     }
 
     public function addUser(){
-        echo json_encode($this->model->registerUser($_POST,true));
+        if(isset($_SESSION["userType"])&&($_SESSION["userType"]==="admin")){
+            echo json_encode($this->model->registerUser($_POST,true));
+        
+        }else{
+            echo(json_encode("Not Authorised."));
+        }
     }
     public function updateUserSettings(){
-        $args = array(
-            'firstname' => FILTER_VALIDATE_BOOLEAN,
-            'lastname' => FILTER_VALIDATE_BOOLEAN,
-            'email' => FILTER_VALIDATE_BOOLEAN,
-            'pseudo'  => FILTER_VALIDATE_BOOLEAN,
-            'pwd' => FILTER_VALIDATE_BOOLEAN,
-            'profilPhoto'  => FILTER_VALIDATE_BOOLEAN,
-            'adresse' => FILTER_VALIDATE_BOOLEAN,
-            'telephone' => FILTER_VALIDATE_BOOLEAN,
-        );
-        $data = filter_input_array(INPUT_POST, $args);
-        echo (json_encode($this->model->updateSet($data,array('1'=>'1'),'usersettings')));
+        if(isset($_SESSION["userType"])){
+            $args = array(
+                'firstname' => FILTER_VALIDATE_BOOLEAN,
+                'lastname' => FILTER_VALIDATE_BOOLEAN,
+                'email' => FILTER_VALIDATE_BOOLEAN,
+                'pseudo'  => FILTER_VALIDATE_BOOLEAN,
+                'pwd' => FILTER_VALIDATE_BOOLEAN,
+                'profilPhoto'  => FILTER_VALIDATE_BOOLEAN,
+                'adresse' => FILTER_VALIDATE_BOOLEAN,
+                'telephone' => FILTER_VALIDATE_BOOLEAN,
+            );
+            $data = filter_input_array(INPUT_POST, $args);
+            echo (json_encode($this->model->updateSet($data,array('1'=>'1'),'usersettings')));
+        }else{
+            echo(json_encode("Not Authorised."));
+        }
     }
 
    
 
     public function getUserSetting(){
-        echo (json_encode($this->model->getAll("","usersettings")[0]));
+        if(isset($_SESSION["userType"])){
+            echo (json_encode($this->model->getAll("","usersettings")[0]));
+        }else{
+            echo(json_encode("Not Authorised."));
+        }
     }
 
     public function updateUser(){
-        $args = array(
-            'pseudo' => FILTER_DEFAULT,
-            'email' => FILTER_VALIDATE_EMAIL,
-            'firstname' => FILTER_DEFAULT,
-            'lastname' => FILTER_DEFAULT,
-            'adresse' => FILTER_DEFAULT,
-            'telephone' => FILTER_DEFAULT,
-            'profilPhoto' => FILTER_DEFAULT,
-        );
-        $data = filter_input_array(INPUT_POST,$args);
-        $idUser["idUser"] = filter_input(INPUT_POST,"idUser",FILTER_VALIDATE_INT);
-        // if(!empty($_FILES["file"]["name"])){
-        //     $data["profilPhoto"] = $_FILES["file"]["name"];
-        // }
-        if(!empty($_POST["pwd"])){
-          $data["pwd"] = password_hash(filter_input(INPUT_POST,"pwd",FILTER_DEFAULT), PASSWORD_DEFAULT);
+        if(isset($_SESSION["userType"])){
+            $args = array(
+                'pseudo' => FILTER_DEFAULT,
+                'email' => FILTER_VALIDATE_EMAIL,
+                'firstname' => FILTER_DEFAULT,
+                'lastname' => FILTER_DEFAULT,
+                'adresse' => FILTER_DEFAULT,
+                'telephone' => FILTER_DEFAULT,
+                'profilPhoto' => FILTER_DEFAULT,
+            );
+            $data = filter_input_array(INPUT_POST,$args);
+            $idUser["idUser"] = filter_input(INPUT_POST,"idUser",FILTER_VALIDATE_INT);
+            // if(!empty($_FILES["file"]["name"])){
+            //     $data["profilPhoto"] = $_FILES["file"]["name"];
+            // }
+            if(!empty($_POST["pwd"])){
+              $data["pwd"] = password_hash(filter_input(INPUT_POST,"pwd",FILTER_DEFAULT), PASSWORD_DEFAULT);
+            }
+            // $this->uploadFileImg();
+            $this->model->update($data,$idUser);
+            $response = ($this->model->getAll("WHERE idUser=".$idUser["idUser"]))[0];
+            $response["isConnected"] = true;
+            echo json_encode($response);
+        }else{
+            echo(json_encode("Not Authorised."));
         }
-        // $this->uploadFileImg();
-        $this->model->update($data,$idUser);
-        $response = ($this->model->getAll("WHERE idUser=".$idUser["idUser"]))[0];
-        $response["isConnected"] = true;
-        echo json_encode($response);
     }
 
     public function deleteUser(){
-        $idUser["idUser"] = filter_input(INPUT_POST,"idUser",FILTER_VALIDATE_INT);
-        echo json_encode($this->model->delete($idUser));
+        if(isset($_SESSION["userType"])&&($_SESSION["userType"]==="admin")){
+            $idUser["idUser"] = filter_input(INPUT_POST,"idUser",FILTER_VALIDATE_INT);
+            echo json_encode($this->model->delete($idUser));
+        }else{
+            echo(json_encode("Not Authorised."));
+        }
     }
 
     public function getCountUsers(){
@@ -84,7 +105,11 @@ class UsersController extends Controller{
     }
 
     public function  getAllUsers(){
-        echo(json_encode($this->model->getAll('ORDER BY idUser DESC')));
+        if(isset($_SESSION["userType"])&&($_SESSION["userType"]==="admin")){
+            echo(json_encode($this->model->getAll('ORDER BY idUser DESC')));
+        }else{
+            echo(json_encode("Not Authorised."));
+        }
     }
 
     public function disconnect(){

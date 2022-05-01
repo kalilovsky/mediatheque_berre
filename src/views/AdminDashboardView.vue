@@ -3,7 +3,7 @@
   <!-- <Toast position="top-right" group="tl" /> -->
   <router-view v-if="isConnected === true && userType==='admin'"></router-view>
   <div v-else>
-    <p>Vous n'avez les privilèges pour pouvoir accéder à cet ressources!!</p>
+    <p class="errorMsg">Vous n'avez les privilèges pour pouvoir accéder à cet ressources!!</p>
   </div>
 </template>
 
@@ -52,5 +52,8 @@ export default {
 </script>
 
 <style>
-
+  .errorMsg{
+    top: 50%;
+    left: 50%;
+  }
 </style>

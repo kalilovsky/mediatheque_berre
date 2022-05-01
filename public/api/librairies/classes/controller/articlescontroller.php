@@ -44,7 +44,7 @@ class ArticlesController extends Controller
     
     public function addArticle()
     {
-        if(isset($_SESSION["idUser"])){
+        if(isset($_SESSION["idUser"])&&($_SESSION["userType"]==="admin")){
             $idUser = $_SESSION["idUser"];
             $args = array(
                 'idCategory' => FILTER_VALIDATE_INT,
@@ -75,23 +75,27 @@ class ArticlesController extends Controller
     }
 
     public function updateArticleSettings(){
-        $args = array(
-            'title' => FILTER_VALIDATE_BOOLEAN,
-            'smallDesc' => FILTER_VALIDATE_BOOLEAN,
-            'filePath' => FILTER_VALIDATE_BOOLEAN,
-            'author'  => FILTER_VALIDATE_BOOLEAN,
-            'stock' => FILTER_VALIDATE_BOOLEAN,
-            'editor'  => FILTER_VALIDATE_BOOLEAN,
-            'loanDuration' => FILTER_VALIDATE_BOOLEAN,
-            'idCategory' => FILTER_VALIDATE_BOOLEAN,
-            'idSubCategorie' => FILTER_VALIDATE_BOOLEAN,
-            'idCollection' => FILTER_VALIDATE_BOOLEAN,
-            'idUser'=> FILTER_VALIDATE_BOOLEAN,
-            'format'  => FILTER_VALIDATE_BOOLEAN,
-            'datePublished'=>FILTER_VALIDATE_BOOLEAN,
-        );
-        $data = filter_input_array(INPUT_POST, $args);
-        echo (json_encode($this->model->updateSet($data,array('1'=>'1'),'articlesettings')));
+        if(isset($_SESSION["userType"])&&($_SESSION["userType"]==="admin")){
+            $args = array(
+                'title' => FILTER_VALIDATE_BOOLEAN,
+                'smallDesc' => FILTER_VALIDATE_BOOLEAN,
+                'filePath' => FILTER_VALIDATE_BOOLEAN,
+                'author'  => FILTER_VALIDATE_BOOLEAN,
+                'stock' => FILTER_VALIDATE_BOOLEAN,
+                'editor'  => FILTER_VALIDATE_BOOLEAN,
+                'loanDuration' => FILTER_VALIDATE_BOOLEAN,
+                'idCategory' => FILTER_VALIDATE_BOOLEAN,
+                'idSubCategorie' => FILTER_VALIDATE_BOOLEAN,
+                'idCollection' => FILTER_VALIDATE_BOOLEAN,
+                'idUser'=> FILTER_VALIDATE_BOOLEAN,
+                'format'  => FILTER_VALIDATE_BOOLEAN,
+                'datePublished'=>FILTER_VALIDATE_BOOLEAN,
+            );
+            $data = filter_input_array(INPUT_POST, $args);
+            echo (json_encode($this->model->updateSet($data,array('1'=>'1'),'articlesettings')));
+        }else{
+            echo(json_encode("Not Authorised."));
+        }
     }
 
     public function getArticleSetting(){
@@ -185,24 +189,29 @@ class ArticlesController extends Controller
     }
 
     public function updateArticle(){
-        $args = array(
-            'idCategory' => FILTER_VALIDATE_INT,
-            'title' => FILTER_DEFAULT,
-            'smallDesc' => FILTER_DEFAULT,
-            'filePath' => FILTER_DEFAULT,
-            'author'  => FILTER_DEFAULT,
-            'stock' => FILTER_VALIDATE_INT,
-            'editor'  => FILTER_DEFAULT,
-            'loanDuration' => FILTER_VALIDATE_INT,
-            'idSubCategorie' => FILTER_VALIDATE_INT,
-            'idCollection' => FILTER_VALIDATE_INT,
-            'format'  => FILTER_DEFAULT,
-            'datePublished'=>FILTER_DEFAULT
-        );
-        $idArticle["idArticle"] = filter_input(INPUT_POST,'idArticle',FILTER_VALIDATE_INT);
-        $data = filter_input_array(INPUT_POST, $args);
-        $this->model->update($data,$idArticle);
-        echo (json_encode('good'));
+        if(isset($_SESSION["idUser"])){
+            
+            $args = array(
+                'idCategory' => FILTER_VALIDATE_INT,
+                'title' => FILTER_DEFAULT,
+                'smallDesc' => FILTER_DEFAULT,
+                'filePath' => FILTER_DEFAULT,
+                'author'  => FILTER_DEFAULT,
+                'stock' => FILTER_VALIDATE_INT,
+                'editor'  => FILTER_DEFAULT,
+                'loanDuration' => FILTER_VALIDATE_INT,
+                'idSubCategorie' => FILTER_VALIDATE_INT,
+                'idCollection' => FILTER_VALIDATE_INT,
+                'format'  => FILTER_DEFAULT,
+                'datePublished'=>FILTER_DEFAULT
+            );
+            $idArticle["idArticle"] = filter_input(INPUT_POST,'idArticle',FILTER_VALIDATE_INT);
+            $data = filter_input_array(INPUT_POST, $args);
+            $this->model->update($data,$idArticle);
+            echo (json_encode('good'));
+        }else{
+            echo(json_encode("Not Authorised."));
+        }
     }
 
     // public function getArticleByUserId(){
@@ -227,7 +236,7 @@ class ArticlesController extends Controller
     {
         //il faudrait rajouter une vérification d'identité que l'article appartient réelement à l'utilisateur
         //pour le laisser effacer
-        if (isset($_SESSION["idUser"])) {
+        if (isset($_SESSION["userType"])&&($_SESSION["userType"]==="admin")) {
             $data["idArticle"] = filter_input(INPUT_POST, "idArticle", FILTER_VALIDATE_INT);
             echo json_encode($this->model->delete($data));
         } else {

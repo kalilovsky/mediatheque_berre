@@ -127,7 +127,7 @@ export default {
                                 this.$emit('addArticles');
                                 this.loanPopup = !this.loanPopup;
                             }else{
-                                this.$toast.add({severity:'warn', summary: 'Erreur', detail:data,group: 'tl', life: 3000});
+                                this.$toast.add({severity:'warn', summary: 'Erreur', detail:data.messageRegister ,group: 'tl', life: 3000});
                                 this.updateLoading = !this.updateLoading;
                             }
                         })
